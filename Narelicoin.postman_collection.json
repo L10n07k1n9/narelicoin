@@ -1,0 +1,288 @@
+{
+	"info": {
+		"_postman_id": "e26dd28d-ec40-41b1-a65c-1861dc87c451",
+		"name": "Narelicoin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Reset user and env",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "deced82a-f250-453e-a9d8-5b83b18e1a6e",
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"// example using pm.response.to.have",
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"// response assertions",
+							"pm.test(\"response should be okay to process\", function () { ",
+							"    pm.response.to.not.be.error; ",
+							"    pm.response.to.not.have.jsonBody(\"error\"); ",
+							"});",
+							"",
+							"pm.test(\"Is empty confirmation\", function () { ",
+							"    ",
+							"    //pm.response.to.have.body(\"true\"); ",
+							"    // assert that the status code is 200",
+							"    pm.environment.set(\"tokens\", JSON.stringify([])); ",
+							"  ",
+							"    ",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/resetUsers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"resetUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Wallet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "323d3142-ef40-4974-be22-19f11c3463e4",
+						"type": "text/javascript",
+						"exec": [
+							"// example using pm.response.to.have",
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"// response assertions",
+							"pm.test(\"response should be okay to process\", function () { ",
+							"    pm.response.to.not.be.error; ",
+							"    pm.response.to.have.jsonBody(\"\"); ",
+							"    pm.response.to.not.have.jsonBody(\"error\"); ",
+							"});",
+							"pm.test(\"User data\", function () {",
+							"    // assert that the status code is 200",
+							"    //pm.response.to.be.ok;",
+							"    //pm.response.to.be.json;",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.userId).to.be.gt(0);",
+							"    pm.expect(jsonData.privateKey).to.be.lengthOf(64);",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody),tokens=[];",
+							"tokens= JSON.parse(pm.environment.get(\"tokens\"));",
+							"tokens.push(jsonData);",
+							"pm.environment.set(\"lastToken\", JSON.stringify(jsonData));",
+							"pm.environment.set(\"lastTokenPrivateKey\", JSON.stringify(jsonData.privateKey));",
+							"pm.environment.set(\"tokens\", JSON.stringify(tokens));",
+							"console.log(\"Tokens:\",tokens);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": ""
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3001/createWallet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createWallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List User (Wallets)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e25c70fd-b417-4674-a194-f7bab1b699b4",
+						"type": "text/javascript",
+						"exec": [
+							"function getRandomIntInclusive(min, max) {",
+							"  min = Math.ceil(min);",
+							"  max = Math.floor(max);",
+							"  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive ",
+							"}",
+							"",
+							"// example using pm.response.to.have",
+							"pm.test(\"response is ok\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"// response assertions",
+							"pm.test(\"response should be okay to process\", function () { ",
+							"    pm.response.to.not.be.error; ",
+							"    pm.response.to.have.jsonBody(\"\"); ",
+							"    pm.response.to.not.have.jsonBody(\"error\"); ",
+							"});",
+							"",
+							"pm.test(\"List is a valid array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    console.log(jsonData);",
+							"    // assert that the status code is 200",
+							"    pm.expect(jsonData).to.be.an('array').that.is.not.empty;",
+							"    //https://github.com/geraintluff/tv4/issues/161",
+							"    pm.test('And schema is valid', function() {",
+							"        var schema = {",
+							"         \"type\": \"array\",",
+							"          \"items\": {",
+							"                \"id\": {",
+							"                  \"type\": \"number\"",
+							"                },",
+							"                \"publicKey\": {",
+							"                  \"type\": \"string\"",
+							"                }",
+							"            }",
+							"        };",
+							"        pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+							"    });",
+							"    if(jsonData.length>2){",
+							"        var ix = getRandomIntInclusive(0,jsonData.length-1);",
+							"        var randomPublicUser = jsonData[ix],lastTokenPubKey=null,lastToken=null,tokens=[],randomPublicUserPrivateKey=null;",
+							"        lastToken = JSON.parse(pm.environment.get(\"lastToken\"));",
+							"        tokens= JSON.parse(pm.environment.get(\"tokens\"));",
+							"        ",
+							"        lastTokenPubKey= jsonData[lastToken.userId-1].publicKey;",
+							"        randomPublicUserPrivateKey = tokens[randomPublicUser.id-1].privateKey;",
+							"        console.log(jsonData[lastToken.userId-1])",
+							"        pm.environment.set(\"randomPublicUser\", JSON.stringify(randomPublicUser));",
+							"        pm.environment.set(\"randomPublicUserPrivateKey\", JSON.stringify(randomPublicUserPrivateKey));",
+							"        pm.environment.set(\"randomPublicUserPublicKey\", JSON.stringify(randomPublicUser.publicKey));",
+							"        pm.environment.set(\"lastTokenPublicKey\", JSON.stringify(lastTokenPubKey));",
+							"        ",
+							"        console.log(\"randomPublicUser:\",randomPublicUser);",
+							"    }",
+							"    ",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3001/listWallets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"listWallets"
+					]
+				},
+				"description": "To create a nice environment vars, please have at least 3 elements... the lesser the elements the probability of collision between sender and recipient is greater (33%)"
+			},
+			"response": []
+		},
+		{
+			"name": "Send and sign message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00814f03-497a-47c8-9524-46fc291c177b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{\r\n\t\"msg\":\"Can machines think?... The new form of the problem can be described in terms of a game which we call the 'imitation game.\",\r\n\t\"privKey\":{{lastTokenPrivateKey}},\r\n\t\"from\":{{lastTokenPublicKey}},\r\n\t\"to\":{{randomPublicUserPublicKey}}\r\n}\r\n{\r\n\t\"msg\":\"Mathematical reasoning may be regarded rather schematically as the exercise of a combination of two facilities, which we may call intuition and ingenuity\",\r\n\t\"privKey\":{{lastTokenPrivateKey}},\r\n\t\"from\":{{lastTokenPublicKey}},\r\n\t\"to\":{{randomPublicUserPublicKey}}\r\n}\r\n\r\n{\r\n\t\"msg\":\"Tramped 1: NOT MATCHING OR FORGED KEY\",\r\n\t\"privKey\":\"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000\",\r\n\t\"from\":{{lastTokenPublicKey}},\r\n\t\"to\":{{randomPublicUserPublicKey}}\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/sendSignedMessage",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"sendSignedMessage"
+					]
+				},
+				"description": "Send a plain text message and sign it with your private key (token) to a public key address (or user or wallet... )\nThe endpiont will do both operations in one call. \nSender message is signed with sender's private key -> Receipt validates the sign against sender's public key -> returns signature of sender's message"
+			},
+			"response": []
+		},
+		{
+			"name": "List User inbox",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"tokenKey\" : {{randomPublicUserPrivateKey}} }"
+				},
+				"url": {
+					"raw": "http://localhost:3001/listInbox",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"listInbox"
+					]
+				},
+				"description": "Validates messaes received"
+			},
+			"response": []
+		}
+	]
+}
