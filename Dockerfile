@@ -1,4 +1,4 @@
-FROM node:carbon
+FROM mhart/alpine-node:8
 #create src directory
 WORKDIR /usr/src/narelicoin
 

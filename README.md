@@ -19,11 +19,12 @@ npm install
 npm start
 node ./dist/main.js
 ```
+
 ## To build local docker
 To create your local docker image and container:
 
-1. Run `docker build --rm -f Dockerfile -t 73k1l4/blockchain:narelicoin .`
-2. Then : `docker run --rm -d -p 3001:3001 73k1l4/blockchain:narelicoin`
+1. Run `docker build --rm -f Dockerfile -t 73k1l4/narelicoin:latest .`
+2. Then : `docker run --rm -d -p 3001:3001 73k1l4/narelicoin:latest`
 
 ## References
 
